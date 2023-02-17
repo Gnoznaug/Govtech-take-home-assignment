@@ -32,8 +32,9 @@ func init() {
 func RegisterTeacher(teacherEmail string, studentEmails []string) error {
 	_, _ = db.Exec(util.GetAddTeacherQuery(teacherEmail));
 
-	_, _ = db.Exec(util.GetAddStudentsQuery(studentEmails))
-
+	for _,element := range studentEmails {
+		_,_ = db.Exec(util.GetAddStudentQuery(element))
+	}
 	_, err := db.Exec(util.GetRegisterStudentsUnderTeacherQuery(teacherEmail, studentEmails))
 	if err != nil {
         return fmt.Errorf("One of the students is already registed to this teacher.")
