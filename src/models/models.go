@@ -30,7 +30,7 @@ func init() {
 }
 
 func RegisterTeacher(teacherEmail string, studentEmails []string) error {
-	_, _ = db.Exec(util.GetAddTeacherQuery(teacherEmail));
+	_, _ = db.Exec(util.GetAddTeacherQuery(teacherEmail))
 
 	for _,element := range studentEmails {
 		_,_ = db.Exec(util.GetAddStudentQuery(element))
@@ -43,8 +43,12 @@ func RegisterTeacher(teacherEmail string, studentEmails []string) error {
 }
 
 func FindCommonStudents(teacherEmails []string) ([]string,error) {
-	// maybe query if the teachers exist or not first
-	rows, _ := db.Query(util.GetCommonStudentsQuery(teacherEmails));
+	for _, element := range teacherEmails {
+		if (!TeacherExists(element)) {
+			return nil, fmt.Errorf("There is no such teacher with the email %s.", element)
+		}
+	}
+	rows, _ := db.Query(util.GetCommonStudentsQuery(teacherEmails))
 	defer rows.Close()
 	var emails []string
 	for rows.Next() {
@@ -58,10 +62,15 @@ func FindCommonStudents(teacherEmails []string) ([]string,error) {
 }
 
 func SuspendStudent(studentEmail string) error {
-	Result, _:= db.Exec(util.GetSuspendStudentQuery(studentEmail));
+	Result, _:= db.Exec(util.GetSuspendStudentQuery(studentEmail))
 	rows, _ := Result.RowsAffected()
 	if (rows == 0) {
 		return fmt.Errorf("The student is already suspended.")
 	}
 	return nil
+}
+
+func TeacherExists(email string) bool {
+	rows, _ := db.Query(util.GetDoesTeacherExistQuery(email))
+	return rows.Next()
 }

@@ -35,3 +35,7 @@ func GetCommonStudentsQuery(teacherEmails []string) string {
 func GetSuspendStudentQuery(studentEmail string) string {
 	return fmt.Sprintf(`UPDATE student SET suspended_status = 1 WHERE email = "%s";`, studentEmail)
 }
+
+func GetDoesTeacherExistQuery(email string) string {
+	return fmt.Sprintf(`SELECT email FROM teacher WHERE email = "%s"`, email)
+}
