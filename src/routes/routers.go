@@ -7,4 +7,5 @@ import (
 
 var RegisterTeacherRoutes = func(router *mux.Router) {
 	router.HandleFunc("/api/register", controllers.AddTeacher).Methods("POST")
+	router.HandleFunc("/api/suspend", controllers.SuspendStudent).Methods("POST")
 }
