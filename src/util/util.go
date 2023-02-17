@@ -6,11 +6,6 @@ import (
 	"regexp"
 )
 
-func GetAddStudentQuery(emails string) string {
-	var s string = fmt.Sprintf(`INSERT INTO student(email) VALUES("%s");`,emails)
-	return s
-}
-
 func GetFormattedEmails(emails []string) string {
 	var EmailValues string = "("
 	for _, element := range emails {
