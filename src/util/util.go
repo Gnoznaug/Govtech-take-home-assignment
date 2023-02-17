@@ -10,12 +10,12 @@ func GetAddTeacherQuery(email string) string {
 }
 
 func GetAddStudentsQuery(emails []string) string {
-	var EmailValues = GetFormattedStudentEmails(emails)
+	var EmailValues = GetFormattedEmails(emails)
 	var s string = fmt.Sprintf(`INSERT INTO student(email) VALUES%s;`,EmailValues)
 	return s
 }
 
-func GetFormattedStudentEmails(emails []string) string {
+func GetFormattedEmails(emails []string) string {
 	var EmailValues string
 	for _, element := range emails {
 		EmailValues += fmt.Sprintf(`("%s"),`, element)
@@ -24,8 +24,13 @@ func GetFormattedStudentEmails(emails []string) string {
 }
 
 func GetRegisterStudentsUnderTeacherQuery(teacherEmail string, studentEmails []string) string {
-	var StudentEmailValues = GetFormattedStudentEmails(studentEmails)
+	var StudentEmailValues = GetFormattedEmails(studentEmails)
 	return fmt.Sprintf(`INSERT INTO teaching(teacher_id,student_id) SELECT teacher_id, student_id FROM teacher, student WHERE teacher.email = "%s" AND student.email IN %s;`, teacherEmail, StudentEmailValues)
+}
+
+func GetCommonStudentsQuery(teacherEmails []string) string {
+	return fmt.Sprintf(`SELECT DISTINCT student.email FROM student INNER JOIN teaching ON student.student_id = teaching.student_id
+		 INNER JOIN teacher ON teaching.teacher_id = teacher.teacher_id WHERE student.suspended_status = FALSE AND teacher.email IN %s;`, GetFormattedEmails(teacherEmails))
 }
 
 func GetSuspendStudentQuery(studentEmail string) string {

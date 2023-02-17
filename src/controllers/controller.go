@@ -10,9 +10,6 @@ import(
 	"github.com/gnoznaug/src/errors"
 )
 
-// var APIError errors.APIError
-
-
 func AddTeacher(w http.ResponseWriter, r *http.Request) {
 	rawData, err := ioutil.ReadAll(r.Body)
 	var req models.RegisterRequest
@@ -38,6 +35,23 @@ func SuspendStudent(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		res := errors.APIError{Message: err.Error()}
+		respJSON, _ := json.Marshal(res)
+		w.Write(respJSON)
+	}
+}
+
+func GetCommonStudents(w http.ResponseWriter, r *http.Request) {
+	values := r.URL.Query()
+	teachers, ok := values["teacher"]
+	if (ok) {
+		emails, _ := models.FindCommonStudents(teachers)
+		w.WriteHeader(http.StatusOK)
+		res := models.CommonStudentsResponse{Students: emails}
+		respJSON, _ := json.Marshal(res)
+		w.Write(respJSON)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		res := errors.APIError{Message: "No Teachers chosen."}
 		respJSON, _ := json.Marshal(res)
 		w.Write(respJSON)
 	}
