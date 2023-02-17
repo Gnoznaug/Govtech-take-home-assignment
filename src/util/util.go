@@ -3,11 +3,8 @@ package util
 import (
 	"fmt"
 	"strings"
+	"regexp"
 )
-
-func GetAddTeacherQuery(email string) string {
-	return fmt.Sprintf(`INSERT INTO teacher(email) VALUES("%s")`, email)
-}
 
 func GetAddStudentQuery(emails string) string {
 	var s string = fmt.Sprintf(`INSERT INTO student(email) VALUES("%s");`,emails)
@@ -37,9 +34,22 @@ func GetSuspendStudentQuery(studentEmail string) string {
 }
 
 func GetDoesTeacherExistQuery(email string) string {
-	return fmt.Sprintf(`SELECT email FROM teacher WHERE email = "%s"`, email)
+	return fmt.Sprintf(`SELECT email FROM teacher WHERE email = "%s";`, email)
 }
 
 func GetDoesStudentExistQuery(email string) string {
-	return fmt.Sprintf(`SELECT email FROM student WHERE email = "%s"`, email)
+	return fmt.Sprintf(`SELECT email FROM student WHERE email = "%s";`, email)
+}
+
+func GetIsStudentSuspendedQuery(email string) string {
+	return fmt.Sprintf(`SELECT email FROM student WHERE email = "%s" AND suspended_status = FALSE;`, email)
+}
+
+func ExtractEmails(s string) []string {
+	re := regexp.MustCompile(`@[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}`)
+    matches := re.FindAllString(s, -1)
+	for i, email := range matches {
+        matches[i] = email[1:]
+    }
+    return matches
 }
