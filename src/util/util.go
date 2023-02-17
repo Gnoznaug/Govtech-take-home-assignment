@@ -39,3 +39,7 @@ func GetSuspendStudentQuery(studentEmail string) string {
 func GetDoesTeacherExistQuery(email string) string {
 	return fmt.Sprintf(`SELECT email FROM teacher WHERE email = "%s"`, email)
 }
+
+func GetDoesStudentExistQuery(email string) string {
+	return fmt.Sprintf(`SELECT email FROM student WHERE email = "%s"`, email)
+}

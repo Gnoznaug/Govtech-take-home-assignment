@@ -62,6 +62,9 @@ func FindCommonStudents(teacherEmails []string) ([]string,error) {
 }
 
 func SuspendStudent(studentEmail string) error {
+	if (!StudentExists(studentEmail)) {
+		return fmt.Errorf("There is no such student with the email %s.", studentEmail)
+	}
 	Result, _:= db.Exec(util.GetSuspendStudentQuery(studentEmail))
 	rows, _ := Result.RowsAffected()
 	if (rows == 0) {
@@ -72,5 +75,10 @@ func SuspendStudent(studentEmail string) error {
 
 func TeacherExists(email string) bool {
 	rows, _ := db.Query(util.GetDoesTeacherExistQuery(email))
+	return rows.Next()
+}
+
+func StudentExists(email string) bool {
+	rows, _ := db.Query(util.GetDoesStudentExistQuery(email))
 	return rows.Next()
 }
